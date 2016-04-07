@@ -3,22 +3,10 @@
 #include "Python.h"
 #include <locale.h>
 
-#ifdef __FreeBSD__
-#include <fenv.h>
-#endif
-
-#ifdef MS_WINDOWS
-int
-wmain(int argc, wchar_t **argv)
-{
-    return Py_Main(argc, argv);
-}
-#else
-
-int
-main(int argc, char **argv)
-{
+int main(int argc, char **argv){
+    // wchar_t defaults to Py_UNICODE, but I can't seem to find this anywhere
     wchar_t **argv_copy;
+
     /* We need a second copy, as Python might modify the first one. */
     wchar_t **argv_copy2;
     int i, res;
@@ -27,21 +15,13 @@ main(int argc, char **argv)
     /* Force malloc() allocator to bootstrap Python */
     (void)_PyMem_SetupAllocators("malloc");
 
+    // Actually just calling malloc
     argv_copy = (wchar_t **)PyMem_RawMalloc(sizeof(wchar_t*) * (argc+1));
     argv_copy2 = (wchar_t **)PyMem_RawMalloc(sizeof(wchar_t*) * (argc+1));
     if (!argv_copy || !argv_copy2) {
         fprintf(stderr, "out of memory\n");
         return 1;
     }
-
-    /* 754 requires that FP exceptions run in "no stop" mode by default,
-     * and until C vendors implement C99's ways to control FP exceptions,
-     * Python requires non-stop mode.  Alas, some platforms enable FP
-     * exceptions by default.  Here we disable them.
-     */
-#ifdef __FreeBSD__
-    fedisableexcept(FE_OVERFLOW);
-#endif
 
     oldloc = _PyMem_RawStrdup(setlocale(LC_ALL, NULL));
     if (!oldloc) {
@@ -79,4 +59,4 @@ main(int argc, char **argv)
     PyMem_RawFree(argv_copy2);
     return res;
 }
-#endif
+
