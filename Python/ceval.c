@@ -774,6 +774,9 @@ static int _Py_TracingPossible = 0;
 PyObject *
 PyEval_EvalCode(PyObject *co, PyObject *globals, PyObject *locals)
 {
+#ifdef DEBUG
+    printf("[Python/ceval.c] (PyEval_EvalCode) - Running PyEval_EvalCodeEx. I think this function is just a wrapper for this other one.\n");
+#endif
     return PyEval_EvalCodeEx(co,
                       globals, locals,
                       (PyObject **)NULL, 0,
@@ -3830,6 +3833,10 @@ _PyEval_EvalCodeWithName(PyObject *_co, PyObject *globals, PyObject *locals,
     int n = argcount;
     PyObject *kwdict = NULL;
 
+#ifdef DEBUG
+    printf("[Python/ceval.c] (_PyEval_EvalCodeWithName) - Oh, there's a lot of code for this function...\n");
+#endif
+
     if (globals == NULL) {
         PyErr_SetString(PyExc_SystemError,
                         "PyEval_EvalCodeEx: NULL globals");
@@ -4063,6 +4070,9 @@ PyEval_EvalCodeEx(PyObject *_co, PyObject *globals, PyObject *locals,
            PyObject **args, int argcount, PyObject **kws, int kwcount,
            PyObject **defs, int defcount, PyObject *kwdefs, PyObject *closure)
 {
+#ifdef DEBUG
+    printf("[Python/ceval.c] (PyEval_EvalCodeEx) - Running _PyEval_EvalCodeWithName. Another wrapper.\n");
+#endif
     return _PyEval_EvalCodeWithName(_co, globals, locals,
                                     args, argcount, kws, kwcount,
                                     defs, defcount, kwdefs, closure,

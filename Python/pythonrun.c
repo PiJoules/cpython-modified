@@ -377,9 +377,15 @@ PyRun_SimpleFileExFlags(FILE *fp, const char *filename, int closeit,
         Py_DECREF(f);
     }
     len = strlen(filename);
+#ifdef DEBUG
+    printf("[Python/pythonrun.c] (PyRun_SimpleFileExFlags) - filename = %s.\n", filename);
+#endif
     ext = filename + len - (len > 4 ? 4 : 0);
     if (maybe_pyc_file(fp, filename, ext, closeit)) {
         FILE *pyc_fp;
+#ifdef DEBUG
+        printf("[Python/pythonrun.c] (PyRun_SimpleFileExFlags) - maybe_pyc_file.\n");
+#endif
         /* Try to run a pyc file. First, re-open in binary */
         if (closeit)
             fclose(fp);
@@ -397,6 +403,9 @@ PyRun_SimpleFileExFlags(FILE *fp, const char *filename, int closeit,
         v = run_pyc_file(pyc_fp, filename, d, d, flags);
         fclose(pyc_fp);
     } else {
+#ifdef DEBUG
+        printf("[Python/pythonrun.c] (PyRun_SimpleFileExFlags) - not maybe_pyc_file.\n");
+#endif
         /* When running from stdin, leave __main__.__loader__ alone */
         if (strcmp(filename, "<stdin>") != 0 &&
             set_main_loader(d, filename, "SourceFileLoader") < 0) {
@@ -404,8 +413,14 @@ PyRun_SimpleFileExFlags(FILE *fp, const char *filename, int closeit,
             ret = -1;
             goto done;
         }
+#ifdef DEBUG
+        printf("[Python/pythonrun.c] (PyRun_SimpleFileExFlags) - Start PyRun_FileExFlags.\n");
+#endif
         v = PyRun_FileExFlags(fp, filename, Py_file_input, d, d,
                               closeit, flags);
+#ifdef DEBUG
+        printf("[Python/pythonrun.c] (PyRun_SimpleFileExFlags) - Done PyRun_FileExFlags.\n");
+#endif
     }
     flush_io();
     if (v == NULL) {
@@ -930,14 +945,26 @@ PyRun_FileExFlags(FILE *fp, const char *filename_str, int start, PyObject *globa
     if (arena == NULL)
         goto exit;
 
+#ifdef DEBUG
+    printf("[Python/pythonrun.c] (PyRun_FileExFlags) - Generating ast from file obj...\n");
+#endif
     mod = PyParser_ASTFromFileObject(fp, filename, NULL, start, 0, 0,
                                      flags, NULL, arena);
+#ifdef DEBUG
+    printf("[Python/pythonrun.c] (PyRun_FileExFlags) - Done generating ast from file obj.\n");
+#endif
     if (closeit)
         fclose(fp);
     if (mod == NULL) {
         goto exit;
     }
+#ifdef DEBUG
+    printf("[Python/pythonrun.c] (PyRun_FileExFlags) - Running module...\n");
+#endif
     ret = run_mod(mod, filename, globals, locals, flags, arena);
+#ifdef DEBUG
+    printf("[Python/pythonrun.c] (PyRun_FileExFlags) - Done running module.\n");
+#endif
 
 exit:
     Py_XDECREF(filename);
@@ -981,10 +1008,22 @@ run_mod(mod_ty mod, PyObject *filename, PyObject *globals, PyObject *locals,
 {
     PyCodeObject *co;
     PyObject *v;
+#ifdef DEBUG
+    printf("[Python/pythonrun.c] (run_mod) - Compiling ...\n");
+#endif
     co = PyAST_CompileObject(mod, filename, flags, -1, arena);
+#ifdef DEBUG
+    printf("[Python/pythonrun.c] (run_mod) - Done compiling.\n");
+#endif
     if (co == NULL)
         return NULL;
+#ifdef DEBUG
+    printf("[Python/pythonrun.c] (run_mod) - Evaluating compiled code ...\n");
+#endif
     v = PyEval_EvalCode((PyObject*)co, globals, locals);
+#ifdef DEBUG
+    printf("[Python/pythonrun.c] (run_mod) - Done evaluating compiled code.\n");
+#endif
     Py_DECREF(co);
     return v;
 }
