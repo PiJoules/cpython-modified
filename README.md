@@ -1,4 +1,4 @@
-# This is (my version of) Python version 3.6.0 alpha 1
+# Python version 3.6.0 alpha 1
 
 Python 3.x is a new version of the language, which is incompatible with the
 2.x line of releases.  The language is mostly the same, but many details,
