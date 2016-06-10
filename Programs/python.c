@@ -46,7 +46,13 @@ int main(int argc, char **argv){
     setlocale(LC_ALL, oldloc);
     PyMem_RawFree(oldloc);
 
+#ifdef DEBUG
+    printf("[Programs/python.c] - start Py_Main\n");
+#endif
     res = Py_Main(argc, argv_copy);
+#ifdef DEBUG
+    printf("[Programs/python.c] - end Py_Main\n");
+#endif
 
     /* Force again malloc() allocator to release memory blocks allocated
        before Py_Main() */

@@ -71,13 +71,24 @@ PyRun_AnyFileExFlags(FILE *fp, const char *filename, int closeit,
     if (filename == NULL)
         filename = "???";
     if (Py_FdIsInteractive(fp, filename)) {
-        int err = PyRun_InteractiveLoopFlags(fp, filename, flags);
+        int err;
+#ifdef DEBUG
+        printf("[Python/pythonrun.c] (PyRun_InteractiveLoopFlags) - Running interactive loop/shell...\n");
+#endif
+        err = PyRun_InteractiveLoopFlags(fp, filename, flags);
+#ifdef DEBUG
+        printf("[Python/pythonrun.c] (PyRun_InteractiveLoopFlags) - Done running interactive loop.\n");
+#endif
         if (closeit)
             fclose(fp);
         return err;
     }
-    else
+    else {
+#ifdef DEBUG
+        printf("[Python/pythonrun.c] (PyRun_AnyFileExFlags) - Running simple file.\n");
+#endif
         return PyRun_SimpleFileExFlags(fp, filename, closeit, flags);
+    }
 }
 
 int

@@ -316,7 +316,13 @@ run_file(FILE *fp, const wchar_t *filename, PyCompilerFlags *p_cf)
     else
         filename_str = "<stdin>";
 
+#ifdef DEBUG
+    printf("[Modules/main.c] (run_file) - Running file again...\n");
+#endif
     run = PyRun_AnyFileExFlags(fp, filename_str, filename != NULL, p_cf);
+#ifdef DEBUG
+    printf("[Modules/main.c] (run_file) - Done running file again.\n");
+#endif
     Py_XDECREF(bytes);
     return run != 0;
 }
@@ -712,12 +718,21 @@ Py_Main(int argc, wchar_t **argv)
     }
 
     if (command) {
+#ifdef DEBUG
+        printf("[Modules/main.c] - Running command\n");
+#endif
         sts = run_command(command, &cf);
         PyMem_RawFree(command);
     } else if (module) {
+#ifdef DEBUG
+        printf("[Modules/main.c] - Running module\n");
+#endif
         sts = (RunModule(module, 1) != 0);
     }
     else {
+#ifdef DEBUG
+        printf("[Modules/main.c] - Checking file \"%ls\"\n", filename);
+#endif
 
         if (filename == NULL && stdin_is_interactive) {
             Py_InspectFlag = 0; /* do exit on SystemExit */
@@ -773,8 +788,15 @@ Py_Main(int argc, wchar_t **argv)
             }
         }
 
-        if (sts == -1)
+        if (sts == -1){
+#ifdef DEBUG
+            printf("[Modules/main.c] - Running file \"%ls\"...\n", filename);
+#endif
             sts = run_file(fp, filename, &cf);
+#ifdef DEBUG
+            printf("[Modules/main.c] - Done Running file \"%ls\".\n", filename);
+#endif
+        }
     }
 
     /* Check this environment variable at the end, to give programs the
