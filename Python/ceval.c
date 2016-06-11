@@ -1120,8 +1120,10 @@ PyEval_EvalFrameEx(PyFrameObject *f, int throwflag)
         Py_XDECREF(value); \
         Py_XDECREF(traceback); \
     }
-
 /* Start of code */
+#ifdef DEBUG
+    printf("[Python/ceval.c] (PyEval_EvalCodeEx) - Start of PyEval_EvalFrameEx code. There were lots of macros before this.\n");
+#endif
 
     /* push frame */
     if (Py_EnterRecursiveCall(""))
@@ -1356,6 +1358,10 @@ PyEval_EvalFrameEx(PyFrameObject *f, int throwflag)
 
         /* Main switch on opcode */
         READ_TIMESTAMP(inst0);
+
+#ifdef DEBUG
+    printf("[Python/ceval.c] (PyEval_EvalCodeEx) - Start of a giant switch statement with all the opcodes.\n");
+#endif
 
         switch (opcode) {
 
@@ -3470,6 +3476,9 @@ PyEval_EvalFrameEx(PyFrameObject *f, int throwflag)
 #ifdef CASE_TOO_BIG
         }
 #endif
+#ifdef DEBUG
+    printf("[Python/ceval.c] (PyEval_EvalCodeEx) - End of a giant switch statement with all the opcodes.\n");
+#endif
 
         } /* switch */
 
@@ -3587,6 +3596,9 @@ fast_block_end:
         assert(!PyErr_Occurred());
 
     } /* main loop */
+#ifdef DEBUG
+    printf("[Python/ceval.c] (PyEval_EvalCodeEx) - End of PyEval_EvalFrameEx main loop.\n");
+#endif
 
     assert(why != WHY_YIELD);
     /* Pop remaining stack entries. */
@@ -3658,6 +3670,10 @@ exit_eval_frame:
     Py_LeaveRecursiveCall();
     f->f_executing = 0;
     tstate->frame = f->f_back;
+
+#ifdef DEBUG
+    printf("[Python/ceval.c] (PyEval_EvalCodeEx) - End of PyEval_EvalFrameEx code.\n");
+#endif
 
     return _Py_CheckFunctionResult(NULL, retval, "PyEval_EvalFrameEx");
 }
@@ -3981,6 +3997,12 @@ _PyEval_EvalCodeWithName(PyObject *_co, PyObject *globals, PyObject *locals,
             goto fail;
         }
     }
+#ifdef DEBUG
+    printf("[Python/ceval.c] (_PyEval_EvalCodeWithName) - Marker 1.\n");
+    printf("kwdict:\n");
+    PyObject_Print(kwdict, stdout, 0);
+    printf("\n");
+#endif
 
     /* Allocate and initialize storage for cell vars, and copy free
        vars into frame. */
@@ -4049,7 +4071,13 @@ _PyEval_EvalCodeWithName(PyObject *_co, PyObject *globals, PyObject *locals,
         return gen;
     }
 
+#ifdef DEBUG
+    printf("[Python/ceval.c] (_PyEval_EvalCodeWithName) - Running PyEval_EvalFrameEx...\n");
+#endif
     retval = PyEval_EvalFrameEx(f,0);
+#ifdef DEBUG
+    printf("[Python/ceval.c] (_PyEval_EvalCodeWithName) - Done running of PyEval_EvalFrameEx.\n");
+#endif
 
 fail: /* Jump here from prelude on failure */
 

@@ -46,8 +46,18 @@ Continue to `PyEval_EvalCodeEx` in `Python/ceval.c`
 Continue to `_PyEval_EvalCodeWithName` in `Python/ceval.c`
 
 ### _PyEval_EvalCodeWithName
+Continue to `PyEval_EvalCodeEx` in `Python/ceval.c`
+
+### PyEval_EvalCodeEx
+This contains the main while loop (actually it's a for(;;) loop) that runs instructions
+based on the opcode.
+
+The opcodes are declared in `Include/opcode.h`.
 
 ## Include/object.h
 - `PyObject` definition
+
+## Include/opcode.h
+- Opcode macro declarations
 
 
