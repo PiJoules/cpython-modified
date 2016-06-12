@@ -102,7 +102,15 @@ ARFLAGS=	@ARFLAGS@
 CFLAGSFORSHARED=@CFLAGSFORSHARED@
 # C flags used for building the interpreter object files
 PY_CORE_CFLAGS=	$(PY_CFLAGS) $(PY_CFLAGS_NODIST) $(PY_CPPFLAGS) $(CFLAGSFORSHARED) -DPy_BUILD_CORE
-PY_CORE_CFLAGS+= -DDEBUG  # Comment this out to remove my debug print statements
+
+# My custom flags
+# DEBUG - Print out any debugging statements scattered in the source code.
+# USE_CUSTOM_BUILTINS - Add custom defined functions to the builtin namespace.
+CUSTOM_DIR= Custom
+CUSTOM_HEADERS= \
+	$(srcdir)/$(CUSTOM_DIR)/custom.h
+CUSTOM_OBJS= \
+	$(CUSTOM_DIR)/custom.o
 
 
 # Machine-dependent subdirectories
@@ -414,7 +422,10 @@ PYTHON_OBJS=	\
 		Python/$(DYNLOADFILE) \
 		$(LIBOBJS) \
 		$(MACHDEP_OBJS) \
-		$(THREADOBJ)
+		$(THREADOBJ) \
+
+# Add our own custom objects
+PYTHON_OBJS += $(CUSTOM_OBJS)
 
 
 ##########################################################################
@@ -765,6 +776,19 @@ Modules/pwdmodule.o: $(srcdir)/Modules/pwdmodule.c $(srcdir)/Modules/posixmodule
 
 Modules/signalmodule.o: $(srcdir)/Modules/signalmodule.c $(srcdir)/Modules/posixmodule.h
 
+
+#######################################################################
+# Editing targets for some object files to include the builtin function
+$(CUSTOM_DIR)/custom.o: $(srcdir)/$(CUSTOM_DIR)/custom.c
+	mkdir -p $(CUSTOM_DIR)  # I cannot for the life of me figure out how to make a directory as a dependency. None of the stack overflow answers worked.
+	$(CC) -c $(PY_CORE_CFLAGS) -I$(srcdir)/$(CUSTOM_DIR) -o $@ $<
+
+Python/bltinmodule.o: $(srcdir)/Python/bltinmodule.c
+	$(CC) -c $(PY_CORE_CFLAGS) -I$(srcdir)/$(CUSTOM_DIR) -o $@ $<
+#######################################################################
+
+
+
 Python/dynload_shlib.o: $(srcdir)/Python/dynload_shlib.c Makefile
 	$(CC) -c $(PY_CORE_CFLAGS) \
 		-DSOABI='"$(SOABI)"' \
@@ -965,7 +989,10 @@ PYTHON_HEADERS= \
 		$(srcdir)/Include/weakrefobject.h \
 		pyconfig.h \
 		$(PARSER_HEADERS) \
-		$(AST_H)
+		$(AST_H) \
+
+# Add our own custom headers
+PYTHON_HEADERS += $(CUSTOM_HEADERS)
 
 $(LIBRARY_OBJS) $(MODOBJS) Programs/python.o: $(PYTHON_HEADERS)
 

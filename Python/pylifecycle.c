@@ -290,6 +290,10 @@ _Py_InitializeEx_Private(int install_sigs, int install_importlib)
     char *p;
     extern void _Py_ReadyTypes(void);
 
+#ifdef DEBUG
+    printf("[Python/pylifecycle.c] (_Py_InitializeEx_Private) - Initializing stuff...\n");
+#endif
+
     if (initialized)
         return;
     initialized = 1;
@@ -440,6 +444,10 @@ _Py_InitializeEx_Private(int install_sigs, int install_importlib)
 
     if (!Py_NoSiteFlag)
         initsite(); /* Module site */
+
+#ifdef DEBUG
+    printf("[Python/pylifecycle.c] (_Py_InitializeEx_Private) - Done initializing stuff.\n");
+#endif
 }
 
 void

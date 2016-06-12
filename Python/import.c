@@ -671,8 +671,12 @@ PyImport_AddModuleObject(PyObject *name)
     PyObject *modules = PyImport_GetModuleDict();
     PyObject *m;
 
+
     if ((m = PyDict_GetItemWithError(modules, name)) != NULL &&
         PyModule_Check(m)) {
+#ifdef DEBUG
+        printf("[Python/import.c] (PyImport_AddModuleObject) - module passed check\n");
+#endif
         return m;
     }
     if (PyErr_Occurred()) {

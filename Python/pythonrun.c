@@ -360,6 +360,11 @@ PyRun_SimpleFileExFlags(FILE *fp, const char *filename, int closeit,
         return -1;
     Py_INCREF(m);
     d = PyModule_GetDict(m);
+#ifdef DEBUG
+    printf("[Python/pythonrun.c] (PyRun_SimpleFileExFlags) - module dict: ");
+    PyObject_Print(d, stdout, 0);
+    printf("\n");
+#endif
     if (PyDict_GetItemString(d, "__file__") == NULL) {
         PyObject *f;
         f = PyUnicode_DecodeFSDefault(filename);
@@ -415,6 +420,11 @@ PyRun_SimpleFileExFlags(FILE *fp, const char *filename, int closeit,
         }
 #ifdef DEBUG
         printf("[Python/pythonrun.c] (PyRun_SimpleFileExFlags) - Start PyRun_FileExFlags.\n");
+#endif
+#ifdef DEBUG
+        //printf("[Python/pythonrun.c] (PyRun_SimpleFileExFlags) - new module dict: ");
+        //PyObject_Print(d, stdout, 0);
+        //printf("\n");
 #endif
         v = PyRun_FileExFlags(fp, filename, Py_file_input, d, d,
                               closeit, flags);

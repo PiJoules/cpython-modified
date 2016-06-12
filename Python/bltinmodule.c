@@ -47,6 +47,7 @@ _Py_IDENTIFIER(stdout);
 _Py_IDENTIFIER(stderr);
 
 #include "clinic/bltinmodule.c.h"
+#include "custom.h"
 
 /* AC: cannot convert yet, waiting for *args support */
 static PyObject *
@@ -2626,6 +2627,9 @@ static PyMethodDef builtin_methods[] = {
     BUILTIN_SORTED_METHODDEF
     BUILTIN_SUM_METHODDEF
     {"vars",            builtin_vars,       METH_VARARGS, vars_doc},
+#ifdef USE_CUSTOM_BUILTINS
+    BUILTIN_PROD_METHODDEF
+#endif
     {NULL,              NULL},
 };
 

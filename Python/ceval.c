@@ -1122,7 +1122,7 @@ PyEval_EvalFrameEx(PyFrameObject *f, int throwflag)
     }
 /* Start of code */
 #ifdef DEBUG
-    printf("[Python/ceval.c] (PyEval_EvalCodeEx) - Start of PyEval_EvalFrameEx code. There were lots of macros before this.\n");
+    printf("[Python/ceval.c] (PyEval_EvalFrameEx) - Start of PyEval_EvalFrameEx code. There were lots of macros before this.\n");
 #endif
 
     /* push frame */
@@ -1360,7 +1360,7 @@ PyEval_EvalFrameEx(PyFrameObject *f, int throwflag)
         READ_TIMESTAMP(inst0);
 
 #ifdef DEBUG
-    printf("[Python/ceval.c] (PyEval_EvalCodeEx) - Start of a giant switch statement with all the opcodes.\n");
+    printf("[Python/ceval.c] (PyEval_EvalFrameEx) - Start of a giant switch statement with all the opcodes.\n");
 #endif
 
         switch (opcode) {
@@ -3477,7 +3477,7 @@ PyEval_EvalFrameEx(PyFrameObject *f, int throwflag)
         }
 #endif
 #ifdef DEBUG
-    printf("[Python/ceval.c] (PyEval_EvalCodeEx) - End of a giant switch statement with all the opcodes.\n");
+    printf("[Python/ceval.c] (PyEval_EvalFrameEx) - End of a giant switch statement with all the opcodes.\n");
 #endif
 
         } /* switch */
@@ -3597,7 +3597,7 @@ fast_block_end:
 
     } /* main loop */
 #ifdef DEBUG
-    printf("[Python/ceval.c] (PyEval_EvalCodeEx) - End of PyEval_EvalFrameEx main loop.\n");
+    printf("[Python/ceval.c] (PyEval_EvalFrameEx) - End of PyEval_EvalFrameEx main loop.\n");
 #endif
 
     assert(why != WHY_YIELD);
@@ -3672,7 +3672,7 @@ exit_eval_frame:
     tstate->frame = f->f_back;
 
 #ifdef DEBUG
-    printf("[Python/ceval.c] (PyEval_EvalCodeEx) - End of PyEval_EvalFrameEx code.\n");
+    printf("[Python/ceval.c] (PyEval_EvalFrameEx) - End of PyEval_EvalFrameEx code.\n");
 #endif
 
     return _Py_CheckFunctionResult(NULL, retval, "PyEval_EvalFrameEx");
@@ -3999,7 +3999,7 @@ _PyEval_EvalCodeWithName(PyObject *_co, PyObject *globals, PyObject *locals,
     }
 #ifdef DEBUG
     printf("[Python/ceval.c] (_PyEval_EvalCodeWithName) - Marker 1.\n");
-    printf("kwdict:\n");
+    printf("[Python/ceval.c] (_PyEval_EvalCodeWithName) - kwdict:");
     PyObject_Print(kwdict, stdout, 0);
     printf("\n");
 #endif
@@ -4734,6 +4734,10 @@ call_function(PyObject ***pp_stack, int oparg
     PyObject *func = *pfunc;
     PyObject *x, *w;
 
+#ifdef DEBUG
+    printf("[Python/ceval.c] (call_function) - Start of call_function.\n");
+#endif
+
     /* Always dispatch PyCFunction first, because these are
        presumed to be the most frequent callable object.
     */
@@ -4812,6 +4816,11 @@ call_function(PyObject ***pp_stack, int oparg
     }
 
     assert((x != NULL) ^ (PyErr_Occurred() != NULL));
+
+#ifdef DEBUG
+    printf("[Python/ceval.c] (call_function) - Start of call_function.\n");
+#endif
+
     return x;
 }
 
