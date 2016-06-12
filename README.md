@@ -1,26 +1,31 @@
 # Python version 3.6.0 alpha 1
 
-Python 3.x is a new version of the language, which is incompatible with the
-2.x line of releases.  The language is mostly the same, but many details,
-especially how built-in objects like dictionaries and strings work,
-have changed considerably, and a lot of deprecated features have finally
-been removed.
+My fork of the latest version of python at the time. This repo serves as a playground for me
+to get more familiar with the python source code.
 
+This code may be edited differently than the original source, and is most likely at least
+500 commits behind the moment I cloned it.
+
+This will not run on Windows (and maybe Mac) since I may have removed some code
+associated with a specific OS. I do not care about running this on Windows or Mac. This
+is just a learning tool for me and I only care if I can play with it on Linux.
+
+Various notes about the source I took along the way are in `notes/`.
 
 ## Build Instructions
-On Linux, the source and build will be in to separate dirs, and the executable will not
-by installed gloablly, but stay in the build dir:
+To create a local copy of the python executable:
 ```sh
-$ cd /path/to/python/build/dir  # Goto build dir (not source)
-$ /path/to/python/src/dir/configure  # Construct makefile in build dir
-$ make all  # Make in build dir
+$ mkdir build  # Create and build in dedicated directory
+$ cd build
+$ ../configure  # Configure Makefile
+$ make  # make normally
+$ ./python  # RUn the local executable
+Python 3.6.0a0 (default, Jun 11 2016, 22:44:48) 
+[GCC 4.8.4] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>>
 ```
-
-To create a debug version, the above steps can be done, but adding `--with-debug` to
-the configure command as a flag:
-```sh
-$ /path/to/python/src/subdir/configure  --with-debug
-```
+I would not recommend installing globally.
 
 To clean:
 ```sh
@@ -33,6 +38,38 @@ $ make profile-opt
 ```
 This will rebuild the interpreter executable using Profile
 Guided Optimization (PGO).
+
+
+## Adding custom builtin functions
+I have figured out how to add custom functions to the python builtin namespace.
+I don't mean that I added something to the global namespace (these are 2 different things).
+I mean I can implement my own function in the c source code, and have it available in
+python space without having to import anything along side [these builtin functions](https://docs.python.org/3/library/functions.html#built-in-functions).
+
+For this example, I implemented a simple function `prod()` which is like `sum()`, but instead
+takes the product of all numbers in an iterable (or at least objects that implement `__mult__`). To see it in action, you will need to rebuild the makefile and the executable again, but
+with the `USE_CUSTOM_BUILTINS` flag set.
+```sh
+$ ../configure CFLAGS="-DUSE_CUSTOM_BUILTINS"
+$ make
+$ ./python ../CustomTests/test_prod.py  # Test that prod() works properly
+```
+
+
+## Debug prints
+To enable all the debug statements I left in this code, use the `DEBUG` flag:
+```sh
+$ ../configure CFLAGS="-DDEBUG"
+$ make
+$ ./python ../CustomTests/test_prod.py  # Test that prod() works properly
+```
+
+
+## Tests
+Inside the build directory:
+```sh
+$ make test
+```
 
 
 ## Profile Guided Optimization
