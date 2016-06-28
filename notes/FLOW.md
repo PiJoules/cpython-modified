@@ -1,7 +1,5 @@
 # Python program flow
 
-Left off in Python/ceval.c, _PyEval_EvalCodeWithName. Checking out PyObject definition in Include/object.h.
-
 ## Programs/pyhon.c
 
 ### Program entry point.
